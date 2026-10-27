@@ -1,9 +1,11 @@
 // Demo data: 1 HOD, 1 admin, 3 mentors and 15 mentees in the ISE department.
 // Every name, email, USN and phone number below is fictional.
-import { PrismaClient, type ProfileStatus } from "@prisma/client";
+import type { ProfileStatus } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { createPrismaClient } from "../src/lib/db";
 
-const prisma = new PrismaClient();
+// Seeds the local SQLite file, or Turso when TURSO_DATABASE_URL is set.
+const prisma = createPrismaClient();
 const DEPT = "ISE";
 const DOMAIN = "demo.college.test";
 
@@ -31,6 +33,7 @@ const daysAgo = (n: number) => new Date(Date.now() - n * 24 * 3600 * 1000);
 async function main() {
   // Clear in dependency order so the seed can be re-run.
   await prisma.auditLog.deleteMany();
+  await prisma.storedFile.deleteMany();
   await prisma.endorsement.deleteMany();
   await prisma.mentoringSession.deleteMany();
   await prisma.recommendation.deleteMany();

@@ -1,0 +1,7 @@
+# Never upload local secrets, databases or test output to Vercel.
+.env*
+!.env.example
+prisma/*.db
+prisma/*.db-journal
+test-results
+playwright-report

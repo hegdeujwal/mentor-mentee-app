@@ -50,24 +50,24 @@ enum ReviewDecision {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  name         String
-  email        String   @unique
-  passwordHash String
-  role         Role
-  department   String
+  id                String    @id @default(cuid())
+  name              String
+  email             String    @unique
+  passwordHash      String
+  role              Role
+  department        String
   // Users are deactivated rather than deleted so that history stays intact.
-  isActive     Boolean  @default(true)
+  isActive          Boolean   @default(true)
   // Tokens issued before this moment are rejected (set on sign-out).
   sessionsRevokedAt DateTime?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   profile MenteeProfile?
 
-  mentorOf    MentorAssignment[] @relation("AssignmentMentor")
-  assignment  MentorAssignment?  @relation("AssignmentMentee")
-  assignedBy  MentorAssignment[] @relation("AssignmentCreator")
+  mentorOf   MentorAssignment[] @relation("AssignmentMentor")
+  assignment MentorAssignment?  @relation("AssignmentMentee")
+  assignedBy MentorAssignment[] @relation("AssignmentCreator")
 
   notesWritten  Note[] @relation("NoteAuthor")
   notesReceived Note[] @relation("NoteMentee")
@@ -176,14 +176,14 @@ model Recommendation {
 
 // Named MentoringSession to avoid confusion with the authentication session.
 model MentoringSession {
-  id         String   @id @default(cuid())
-  mentorId   String
-  menteeId   String
-  heldOn     DateTime
-  agenda     String
-  outcome    String
-  followUp   String?
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  mentorId  String
+  menteeId  String
+  heldOn    DateTime
+  agenda    String
+  outcome   String
+  followUp  String?
+  createdAt DateTime @default(now())
 
   mentor User @relation("SessionMentor", fields: [mentorId], references: [id], onDelete: Restrict)
   mentee User @relation("SessionMentee", fields: [menteeId], references: [id], onDelete: Cascade)
@@ -220,4 +220,12 @@ model AuditLog {
 
   @@index([createdAt])
   @@index([actorId])
+}
+
+// Uploaded profile photos. Kept in the database rather than on disk because
+// serverless hosts such as Vercel have no persistent filesystem.
+model StoredFile {
+  name      String   @id
+  bytes     Bytes
+  createdAt DateTime @default(now())
 }

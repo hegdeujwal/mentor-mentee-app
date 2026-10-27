@@ -1,0 +1,6 @@
+-- CreateTable
+CREATE TABLE "StoredFile" (
+    "name" TEXT NOT NULL PRIMARY KEY,
+    "bytes" BLOB NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
