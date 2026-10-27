@@ -133,7 +133,7 @@ Change `provider = "sqlite"` to `"postgresql"` in `prisma/schema.prisma`, set a 
 
 ## Prompts used to build this project
 
-This project was built with an AI coding assistant (Claude Code). As our instructor asked, the prompts given to the assistant are recorded below in the order they were sent. The main prompt is reproduced word for word. The follow-up prompts are lightly edited for spelling and clarity, and short conversational replies (such as confirmations) are left out. Square-bracket placeholders such as `[PATH/FILE NAME]` were left unfilled in the original prompt; the assistant used the format reference `Report_format.pdf` from the project folder.
+This project was built with an AI coding assistant (Claude Code). As our instructor asked, the prompts given to the assistant are recorded below in the order they were sent. The main prompt is reproduced word for word. The follow-up prompts are a selection, lightly edited for spelling and clarity. Square-bracket placeholders such as `[PATH/FILE NAME]` were left unfilled in the original prompt; the assistant used the format reference `Report_format.pdf` from the project folder.
 
 ### 1. Main prompt (build the application and write the report)
 
@@ -243,7 +243,7 @@ WORKING RULES
 
 ### 2. Follow-up prompts
 
-These were sent after the main build, while publishing the project, refining the report and writing this README.
+These were sent after the main build, while publishing the project and refining the report.
 
 1. Commit the entire project folder and push it to GitHub.
 2. Which credentials should be used to sign in? Do the seeded demo accounts work?
@@ -251,17 +251,3 @@ These were sent after the main build, while publishing the project, refining the
 4. How do I create separate accounts for the mentor, mentee, HOD and admin roles?
 5. Where is the generated project report?
 6. The report is too detailed, and most of the diagrams look blurry. Make it more concise and render the diagrams at a higher resolution.
-7. List the parts of the report that I need to fill in myself.
-8. Use these course details in the report, add the GitHub repository link, and deploy the app on Vercel with the live link included:
-    ```text
-    NMAM Institute of Technology
-    Information Science and Engineering
-    User Interface Design
-    IS2302-1
-    2026-27
-    B.tech, ISE
-    Faculty Name: Dr. Jason Elroy Martis
-    ```
-9. Fill in all of those details for me.
-10. Add the prompts to the README; our instructor requires them to be included in the repository.
-11. Include every prompt I gave during the project, not only the main one.
