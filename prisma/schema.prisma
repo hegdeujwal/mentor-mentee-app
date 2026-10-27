@@ -1,0 +1,223 @@
+// Mentor–Mentee Management data model.
+// Written to stay portable: switching `provider` to "postgresql" needs no other change.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MENTEE
+  MENTOR
+  ADMIN
+  HOD
+}
+
+enum ProfileStatus {
+  DRAFT
+  SUBMITTED
+  ENDORSED
+  CHANGES_REQUESTED
+}
+
+enum NoteVisibility {
+  PRIVATE // mentor, admin and HOD only
+  SHARED // also visible to the mentee
+}
+
+enum RecommendationCategory {
+  COURSE
+  CERTIFICATION
+  CLUB
+  INTERNSHIP
+  STUDY_PLAN
+  OTHER
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ReviewDecision {
+  ENDORSED
+  CHANGES_REQUESTED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role
+  department   String
+  // Users are deactivated rather than deleted so that history stays intact.
+  isActive     Boolean  @default(true)
+  // Tokens issued before this moment are rejected (set on sign-out).
+  sessionsRevokedAt DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  profile MenteeProfile?
+
+  mentorOf    MentorAssignment[] @relation("AssignmentMentor")
+  assignment  MentorAssignment?  @relation("AssignmentMentee")
+  assignedBy  MentorAssignment[] @relation("AssignmentCreator")
+
+  notesWritten  Note[] @relation("NoteAuthor")
+  notesReceived Note[] @relation("NoteMentee")
+
+  recommendationsGiven    Recommendation[] @relation("RecommendationMentor")
+  recommendationsReceived Recommendation[] @relation("RecommendationMentee")
+
+  sessionsLed      MentoringSession[] @relation("SessionMentor")
+  sessionsAttended MentoringSession[] @relation("SessionMentee")
+
+  reviews   Endorsement[]
+  auditLogs AuditLog[]
+
+  @@index([role, department])
+}
+
+model MenteeProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  usn         String    @unique
+  phone       String?
+  department  String
+  semester    Int?
+  section     String?
+  dateOfBirth DateTime?
+  address     String?
+
+  hobbies         String?
+  interests       String?
+  skills          String?
+  strengths       String?
+  weaknesses      String?
+  careerGoals     String?
+  achievements    String?
+  extracurricular String?
+  internships     String?
+
+  fatherName       String?
+  motherName       String?
+  guardianPhone    String?
+  parentOccupation String?
+
+  photoPath String?
+
+  status      ProfileStatus @default(DRAFT)
+  submittedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  endorsements Endorsement[]
+
+  @@index([department, status])
+}
+
+// One row per mentee: a mentee has at most one mentor at a time.
+model MentorAssignment {
+  id           String   @id @default(cuid())
+  mentorId     String
+  menteeId     String   @unique
+  assignedById String?
+  assignedAt   DateTime @default(now())
+
+  mentor     User  @relation("AssignmentMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+  mentee     User  @relation("AssignmentMentee", fields: [menteeId], references: [id], onDelete: Cascade)
+  assignedBy User? @relation("AssignmentCreator", fields: [assignedById], references: [id], onDelete: SetNull)
+
+  @@index([mentorId])
+}
+
+model Note {
+  id             String         @id @default(cuid())
+  authorId       String
+  menteeId       String
+  body           String
+  visibility     NoteVisibility
+  acknowledgedAt DateTime?
+  createdAt      DateTime       @default(now())
+
+  author User @relation("NoteAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+  mentee User @relation("NoteMentee", fields: [menteeId], references: [id], onDelete: Cascade)
+
+  @@index([menteeId, visibility])
+  @@index([authorId])
+}
+
+model Recommendation {
+  id             String                 @id @default(cuid())
+  mentorId       String
+  menteeId       String
+  title          String
+  description    String
+  category       RecommendationCategory
+  priority       Priority               @default(MEDIUM)
+  dueDate        DateTime?
+  acknowledgedAt DateTime?
+  createdAt      DateTime               @default(now())
+
+  mentor User @relation("RecommendationMentor", fields: [mentorId], references: [id], onDelete: Restrict)
+  mentee User @relation("RecommendationMentee", fields: [menteeId], references: [id], onDelete: Cascade)
+
+  @@index([menteeId])
+  @@index([mentorId])
+}
+
+// Named MentoringSession to avoid confusion with the authentication session.
+model MentoringSession {
+  id         String   @id @default(cuid())
+  mentorId   String
+  menteeId   String
+  heldOn     DateTime
+  agenda     String
+  outcome    String
+  followUp   String?
+  createdAt  DateTime @default(now())
+
+  mentor User @relation("SessionMentor", fields: [mentorId], references: [id], onDelete: Restrict)
+  mentee User @relation("SessionMentee", fields: [menteeId], references: [id], onDelete: Cascade)
+
+  @@index([mentorId, heldOn])
+  @@index([menteeId])
+}
+
+// Every review decision is kept, so the full endorsement history is visible.
+model Endorsement {
+  id         String         @id @default(cuid())
+  profileId  String
+  reviewerId String
+  decision   ReviewDecision
+  remark     String
+  createdAt  DateTime       @default(now())
+
+  profile  MenteeProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  reviewer User          @relation(fields: [reviewerId], references: [id], onDelete: Restrict)
+
+  @@index([profileId, createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String?
+  details   String?
+  createdAt DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([actorId])
+}

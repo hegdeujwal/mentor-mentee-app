@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
+/* Brand palette (mandatory). */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --regal-navy: #0d3b66;
+  --lemon-chiffon: #faf0ca;
+  --royal-gold: #f4d35e;
+  --sandy-brown: #ee964b;
+  --tomato: #f95738;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/*
+ * Design tokens. Derived shades exist only where the base colour fails WCAG AA:
+ *  - navy-deep: hover state for navy surfaces
+ *  - surface: a lighter chiffon tint for cards (navy text on it: 11.2:1)
+ *  - muted: secondary text (5.8:1 on chiffon)
+ *  - danger-ink: tomato darkened for error text on chiffon (5.7:1)
+ *  - on-tomato: text placed on a tomato background (5.8:1)
+ */
+@theme {
+  --color-navy: var(--regal-navy);
+  --color-navy-deep: #082a4a;
+  --color-chiffon: var(--lemon-chiffon);
+  --color-surface: #fffdf4;
+  --color-gold: var(--royal-gold);
+  --color-sandy: var(--sandy-brown);
+  --color-tomato: var(--tomato);
+  --color-danger-ink: #b02e14;
+  --color-on-tomato: #1a0f0a;
+  --color-muted: #4a5f73;
+  --color-line: #e6dcb0;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-chiffon);
+  color: var(--color-navy);
+}
+
+/* One visible, high-contrast focus style for keyboard users everywhere. */
+:focus-visible {
+  outline: 3px solid var(--color-navy);
+  outline-offset: 2px;
+}
+
+.on-navy :focus-visible {
+  outline-color: var(--color-gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
