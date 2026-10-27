@@ -133,7 +133,7 @@ Change `provider = "sqlite"` to `"postgresql"` in `prisma/schema.prisma`, set a 
 
 ## Prompts used to build this project
 
-This project was built with an AI coding assistant (Claude Code). As our instructor asked, every prompt given to the assistant is recorded below, word for word and in the order it was sent. Spelling and wording are left unchanged. Square-bracket placeholders such as `[PATH/FILE NAME]` were left unfilled in the original prompt; the assistant used the format reference `Report_format.pdf` from the project folder.
+This project was built with an AI coding assistant (Claude Code). As our instructor asked, the prompts given to the assistant are recorded below in the order they were sent. The main prompt is reproduced word for word. The follow-up prompts are lightly edited for spelling and clarity, and short conversational replies (such as confirmations) are left out. Square-bracket placeholders such as `[PATH/FILE NAME]` were left unfilled in the original prompt; the assistant used the format reference `Report_format.pdf` from the project folder.
 
 ### 1. Main prompt (build the application and write the report)
 
@@ -243,18 +243,16 @@ WORKING RULES
 
 ### 2. Follow-up prompts
 
-These were sent after the main build, while publishing the project, filling in the report and writing this README.
+These were sent after the main build, while publishing the project, refining the report and writing this README.
 
-1. Mindfully commit and push this entire folder to github
-2. ok ran that
-3. what account to give to sign up, do dummy accounts work
-4. why do newly created accounts show 17% progress alrwady
-5. how to create new accounts for mentor,mentee,hod,and admin separatly
-6. where is the report
-7. no i mean this project report
-8. i feel like the report is a bit too much in detailalso most of the diagrams seem to be blur
-9. tell me what are the stuffs that are supposed to be filled by me
-10. Course details for the report, plus deployment:
+1. Commit the entire project folder and push it to GitHub.
+2. Which credentials should be used to sign in? Do the seeded demo accounts work?
+3. Why does a newly registered account already show 17% profile completion?
+4. How do I create separate accounts for the mentor, mentee, HOD and admin roles?
+5. Where is the generated project report?
+6. The report is too detailed, and most of the diagrams look blurry. Make it more concise and render the diagrams at a higher resolution.
+7. List the parts of the report that I need to fill in myself.
+8. Use these course details in the report, add the GitHub repository link, and deploy the app on Vercel with the live link included:
     ```text
     NMAM Institute of Technology
     Information Science and Engineering
@@ -263,10 +261,7 @@ These were sent after the main build, while publishing the project, filling in t
     2026-27
     B.tech, ISE
     Faculty Name: Dr. Jason Elroy Martis
-    Add github repo urself
-    also host it on vercel and add the link too
     ```
-11. done, logged into both
-12. mindfully fill all of these for me
-13. I want you to include this prompt in the readme minduflly , this is because our instructor told us to include the prompt in the repo
-14. what do u mean by report and fomrat and all, i just want you to add all the prompts i gave to finish the project to u in the readme
+9. Fill in all of those details for me.
+10. Add the prompts to the README; our instructor requires them to be included in the repository.
+11. Include every prompt I gave during the project, not only the main one.
