@@ -6,6 +6,8 @@ A web application for a college department. Mentees keep a profile, mentors reco
 
 Built with Next.js 16 (App Router, TypeScript), Tailwind CSS 4, Prisma 6 with SQLite, Auth.js v5 (credentials), Zod 4, Vitest and Playwright.
 
+The prompts given to the AI assistant that built this project are listed in [Prompts used to build this project](#prompts-used-to-build-this-project).
+
 ## Quick start
 
 Requires Node.js 20.9 or newer (developed on Node 24).
@@ -128,3 +130,143 @@ Change `provider = "sqlite"` to `"postgresql"` in `prisma/schema.prisma`, set a 
 - Mentees created by CSV import get a temporary password shown once; there is no forced password change or password-reset flow yet.
 - When a user opens a record they may not see, the page shows "not found" but the HTTP status is 200, because the route streams behind `loading.tsx`.
 - The CSP still allows `'unsafe-inline'` scripts (Next.js inline bootstrap); a nonce-based CSP would remove that.
+
+## Prompts used to build this project
+
+This project was built with an AI coding assistant (Claude Code). As our instructor asked, every prompt given to the assistant is recorded below, word for word and in the order it was sent. Spelling and wording are left unchanged. Square-bracket placeholders such as `[PATH/FILE NAME]` were left unfilled in the original prompt; the assistant used the format reference `Report_format.pdf` from the project folder.
+
+### 1. Main prompt (build the application and write the report)
+
+```text
+ROLE
+You are a senior full-stack engineer and technical writer. Build a complete, working Mentor–Mentee Management web application with Next.js, then write the project report for it. Work in order: plan, build, test, document. Do not stop at a skeleton. Deliver finished, runnable work.
+
+PART A: THE APPLICATION
+
+1. Purpose
+A college platform where mentees maintain a profile, mentors review and guide them, an administrator verifies the data, and the HOD gets a department-level overview.
+
+2. Tech stack (use exactly this unless something is impossible)
+- Next.js (latest stable) with the App Router and TypeScript
+- Tailwind CSS, with the palette below defined as design tokens
+- Prisma ORM with SQLite for development (schema must be PostgreSQL-compatible)
+- Auth.js (NextAuth) with credentials login, bcrypt-hashed passwords, and role-based access control enforced in middleware AND in every server action and API route
+- Zod for validation on client and server
+- Server Actions or Route Handlers for the backend
+- Photo upload: validate type (jpg/png/webp) and size (max 2 MB), store under /public/uploads or a storage abstraction, and generate safe file names
+- Vitest for unit tests and Playwright for 3-4 end-to-end flows
+
+3. Roles and requirements
+MENTEE
+- Registers or logs in, then fills and edits a profile: full name, USN, email, phone, department, semester/year, section, date of birth, address, hobbies, interests, skills, strengths, weaknesses, career goals, parents' details, achievements, extracurricular activities, internships, and a profile photo.
+- Sees the notes and recommendations their mentor has written, and can acknowledge them.
+- Sees the verification status of their profile (Draft, Submitted, Endorsed, Changes Requested).
+
+MENTOR
+- Sees only their assigned mentees, with a searchable and filterable list.
+- Opens any assigned mentee's full profile.
+- Adds private notes (visible only to mentor, admin and HOD) and shared notes (visible to the mentee too).
+- Adds recommendations, e.g. courses, certifications, clubs, internships, or study plans, each with a title, description, priority and due date.
+- Logs mentoring sessions (date, agenda, outcome, follow-up).
+
+ADMINISTRATOR
+- Creates and manages users, assigns mentors to mentees, and bulk-imports mentees from CSV.
+- Reviews submitted profiles and can Endorse them or Request Changes with a comment. Every endorsement records who, when and a remark.
+- Views an audit log of key actions.
+
+HOD
+- Read-only dashboard for their department: total mentees, endorsed vs pending profiles, mentor workload, session counts, and charts (e.g. mentees per mentor, profile completion).
+- Can open any mentee, mentor note (non-private only unless policy allows), and endorsement in the department.
+- Can export a department summary as CSV or PDF.
+
+4. Data model (design the Prisma schema)
+Include at least: User (role enum), MenteeProfile, MentorAssignment, Note (visibility enum), Recommendation, Session, Endorsement, AuditLog. Add indexes, foreign keys, and cascade rules. Include a seed script with 1 HOD, 1 admin, 3 mentors and 15 mentees using clearly fake data.
+
+5. Design system (mandatory palette)
+:root {
+  --regal-navy: #0d3b66;
+  --lemon-chiffon: #faf0ca;
+  --royal-gold: #f4d35e;
+  --sandy-brown: #ee964b;
+  --tomato: #f95738;
+}
+Usage:
+- Regal navy: primary color for navbar, headings, primary buttons, sidebar.
+- Lemon chiffon: page and card backgrounds.
+- Royal gold: highlights, active states, badges for Endorsed.
+- Sandy brown: secondary buttons, warnings, "Pending" badges.
+- Tomato: errors, destructive actions, "Changes Requested".
+Rules: text on navy must be lemon chiffon or white; never put gold or sandy brown text on lemon chiffon (insufficient contrast). Meet WCAG AA contrast. The UI must be fully responsive (mobile first), have a clean modern dashboard layout, include loading, empty and error states, and support keyboard navigation. Add a distinct landing page and a role-appropriate dashboard for each role.
+
+6. Quality and security requirements
+- OWASP basics: input validation, output encoding, CSRF protection, secure cookies, rate limiting on login, no secrets in the repo (.env.example only).
+- Authorization checks must be server-side. A mentor must never read another mentor's mentees, and a mentee must never read another mentee's data.
+- Clean folder structure (feature-based), reusable components, no dead code, and meaningful comments only where needed.
+- Run lint, type-check, unit tests and e2e tests and fix everything. Report the real results, and never claim tests passed without running them.
+- Provide a README with setup steps, env variables, seed credentials, scripts and a project structure.
+
+PART B: THE PROJECT REPORT
+
+1. Reference report
+A reference report is provided at [PATH/FILE NAME]. Read it fully first. Reproduce ITS structure exactly: the same front matter (cover page, certificate, declaration, acknowledgement, abstract, table of contents, list of figures and tables), the same chapter order and numbering, heading hierarchy, fonts, spacing, caption style, page numbering and reference style. Use it for format only. Never copy its sentences, and never reuse its content.
+
+2. Content (adapt to the reference's chapters)
+Introduction and problem statement; objectives; literature survey; requirement analysis (functional and non-functional); system design (architecture, use-case diagram, ER diagram, data-flow diagrams, class and sequence diagrams); implementation (modules, key code explanations, security measures); testing (test cases table with real results from the tests you ran); results with real screenshots captured from the running app; conclusion and future scope; references.
+Generate diagrams as Mermaid or PlantUML, render them to images, and caption and number them. Capture screenshots with Playwright. Use my details from placeholders only: [Student name, USN, guide name, department, college, academic year].
+
+3. Originality (target: very low plagiarism and low AI-detection score)
+- Write every paragraph from the actual project: its real schema, real routes, real decisions, real test outputs, real screenshots. Prefer specific, project-grounded statements over generic textbook filler.
+- Do not paste or lightly paraphrase text from the web, documentation, other reports, or the reference report. Explain concepts in your own words, briefly.
+- Vary sentence length and structure naturally. Avoid filler phrases and clichés ("in today's fast-paced digital world", "plays a crucial role", "seamlessly", "robust and scalable" without evidence).
+- Quote nothing longer than a short phrase, and cite whenever you use an external idea.
+- Do not attempt to disguise or obfuscate text to fool detectors. Make the writing genuinely specific and original, and mark with [STUDENT TO PERSONALIZE] the places where my own experience, challenges faced, or opinions should be added.
+
+4. References (strict)
+- Include only sources you have actually opened and confirmed exist in this session. Open each URL and check the title, author/organization, and that the content supports the claim you cite it for.
+- Prefer primary and official sources: Next.js docs, React docs, Prisma docs, Auth.js docs, Tailwind docs, Zod docs, OWASP Cheat Sheets/ASVS, MDN, W3C WCAG 2.2, and real peer-reviewed papers or books on mentoring systems, student information systems, or web application security that you can verify (DOI or publisher page).
+- Never invent, guess, or reconstruct a reference from memory. No placeholder, dead or "null" references, and no unverifiable author, year, volume, page or DOI.
+- Use the citation style of the reference report (IEEE if it does not specify). Number citations in the text, include access dates (use today's date), and make sure every listed reference is cited in the text and every in-text citation appears in the list.
+- Produce a separate verification table (reference no., URL/DOI, verified yes/no, what it supports) as references_verification.md. Remove anything unverified from the report.
+
+PART C: DELIVERABLES
+1. The complete source code in /mentor-mentee-app, running with `npm install && npx prisma migrate dev && npm run seed && npm run dev`
+2. README.md
+3. The report as a .docx (and a PDF export) in the reference report's format
+4. /report-assets with diagrams and screenshots
+5. references_verification.md
+6. A short final summary: what was built, test results (actual numbers), known limitations, and what I must personalize
+
+WORKING RULES
+- Make reasonable decisions yourself and list assumptions at the end. Ask me only if something blocks progress.
+- Keep a task list, and check your own work (run the app, click through each role, re-read the report against the reference format) before declaring it done.
+```
+
+### 2. Follow-up prompts
+
+These were sent after the main build, while publishing the project, filling in the report and writing this README.
+
+1. Mindfully commit and push this entire folder to github
+2. ok ran that
+3. what account to give to sign up, do dummy accounts work
+4. why do newly created accounts show 17% progress alrwady
+5. how to create new accounts for mentor,mentee,hod,and admin separatly
+6. where is the report
+7. no i mean this project report
+8. i feel like the report is a bit too much in detailalso most of the diagrams seem to be blur
+9. tell me what are the stuffs that are supposed to be filled by me
+10. Course details for the report, plus deployment:
+    ```text
+    NMAM Institute of Technology
+    Information Science and Engineering
+    User Interface Design
+    IS2302-1
+    2026-27
+    B.tech, ISE
+    Faculty Name: Dr. Jason Elroy Martis
+    Add github repo urself
+    also host it on vercel and add the link too
+    ```
+11. done, logged into both
+12. mindfully fill all of these for me
+13. I want you to include this prompt in the readme minduflly , this is because our instructor told us to include the prompt in the repo
+14. what do u mean by report and fomrat and all, i just want you to add all the prompts i gave to finish the project to u in the readme
