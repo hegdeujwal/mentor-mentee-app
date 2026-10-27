@@ -2,7 +2,7 @@
 
 A web application for a college department. Mentees keep a profile, mentors record notes, recommendations and meetings for the students assigned to them, an administrator verifies (endorses) profiles, and the Head of Department (HOD) gets a read-only overview with CSV/PDF export.
 
-**Live demo:** https://mentor-mentee-app-chi.vercel.app (sign in with the demo accounts below)
+**Live demo:** https://mentorlink-nmamit.vercel.app (sign in with the demo accounts below)
 
 Built with Next.js 16 (App Router, TypeScript), Tailwind CSS 4, Prisma 6 with SQLite, Auth.js v5 (credentials), Zod 4, Vitest and Playwright.
 
